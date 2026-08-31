@@ -1,9 +1,11 @@
 import Image from "next/image";
 import TestComponent from "./components/testComponent";
 import { getNhlStandings } from "@/lib/api/hockey";
+import { group } from "console";
 
 export default async function Home() {
   const standings = await getNhlStandings();
+  const groups = standings.groups;
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -17,8 +19,7 @@ export default async function Home() {
             Everything is under construction.
           </p>
         </div>
-
-        <pre>{JSON.stringify(standings, null, 2)}</pre>
+        <pre>{JSON.stringify(standings.groups, null, 2)}</pre>
       </main>
     </div>
   );
