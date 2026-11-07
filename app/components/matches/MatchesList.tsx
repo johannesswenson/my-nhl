@@ -1,4 +1,8 @@
+"use client"
+
 import { Match } from "@/lib/api/types";
+import { useState } from "react";
+
 
 type MatchesListProps = {
     matches: Match[];
@@ -67,6 +71,16 @@ function getDateLabel(date: string) {
   }
 
 export default function MatchesList({ matches }: MatchesListProps) {
+    const [revealedMatches, setRevealedMatches] = useState<number[]>([]);
+
+    function toggleReveal(matchId: number) {
+        setRevealedMatches((current) =>
+            current.includes(matchId)
+            ? current.filter((id) => id !== matchId)
+            : [...current, matchId],
+        );
+    }
+
     const groupedMatches: Record<string, Match[]> = {};
 
     matches.forEach((match) => {
@@ -98,46 +112,74 @@ export default function MatchesList({ matches }: MatchesListProps) {
                         </h3>
 
                         <div className="space-y-3">
-                            {dayMatches.map((match) => (
-                                <div
-                                    key={match.id}
-                                    className="rounded-lg border bprder-gray-700 bg-gray-800 p-4"
-                                >
-                                    <div className="grid grid-cols-3 intems-center gap-2">
-                                        <div className="flex items-center justify-start gap-2">
-                                            {match.awayTeam.logo && (
-                                                <img
-                                                    src={match.awayTeam.logo}
-                                                    alt=""
-                                                    className="h-8 w-8 object-contain"
-                                                />
-                                            )}
-                                            <span className="text-white">{match.awayTeam.name}</span>
+                            {dayMatches.map((match) => {
+                                const isRevealed = revealedMatches.includes(match.id);
+                                const status = getMatchStatus(match);
+
+                                return (
+                                    <div
+                                        key={match.id}
+                                        className="rounded-lg border border-gray-700 bg-gray-800 p-4"
+                                    >
+                                        <div className="grid grid-cols-3 items-center gap-2">
+
+                                            <div className="flex items-center justify-end gap-2">
+                                                    {match.homeTeam.logo && (
+                                                        <img 
+                                                            src={match.homeTeam.logo}
+                                                            alt=""
+                                                            className="h-8 w-8 object-contain"
+                                                        />
+                                                    )}
+                                                    <span className="text-white">{match.homeTeam.name}</span>
+                                                </div>
+                                            
+
+                                            <span className="text-center text-gray-400">vs</span>
+
+                                            <div className="flex items-center justify-start gap-2">
+                                                {match.awayTeam.logo && (
+                                                    <img
+                                                        src={match.awayTeam.logo}
+                                                        alt=""
+                                                        className="h-8 w-8 object-contain"
+                                                    />
+                                                )}
+                                                <span className="text-white">{match.awayTeam.name}</span>
+                                            </div>
                                         </div>
 
-                                        <span className="text-center text-gray-400">vs</span>
+                                        <p className="mt-3 text-center text-sm text-gray-400">
+                                            {new Date(match.date).toLocaleString("sv-SE", {
+                                                timeZone: "Europe/Stockholm",
+                                                dateStyle: "short",
+                                                timeStyle: "short",
+                                            })}
+                                        </p>
+                                        {(status === "finished" || status === "Live") && (
+                                            <div className="mt-3 text-center">
+                                                {isRevealed && (
+                                                    <p className="text-white">
+                                                        {match.state.score.current}
+                                                    </p>
+                                                )}
 
-                                        <div className="flex items-center justify-end gap-2">
-                                            {match.homeTeam.logo && (
-                                                <img 
-                                                    src={match.homeTeam.logo}
-                                                    alt=""
-                                                    className="h-8 w-8 object-contain"
-                                                />
-                                            )}
-                                            <span className="text-white">{match.homeTeam.name}</span>
-                                        </div>
+                                                <button
+                                                    onClick={() => toggleReveal(match.id)}
+                                                    className="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+                                                >
+                                                    {isRevealed
+                                                        ? "Dölj resultat"
+                                                        : status === "finished"
+                                                        ? "Visa resultat"
+                                                        : "Visa aktuell ställning"}
+                                                </button>
+                                            </div>
+                                        )}
+
                                     </div>
-
-                                    <p className="mt-3 text-center text-sm text-gray-400">
-                                        {new Date(match.date).toLocaleString("sv-SE", {
-                                            timeZone: "Europe/Stockholm",
-                                            dateStyle: "short",
-                                            timeStyle: "short",
-                                        })}
-                                    </p>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 ))}
