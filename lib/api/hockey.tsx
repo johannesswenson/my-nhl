@@ -6,6 +6,7 @@ const API_URL = "https://hockey-highlights-api.p.rapidapi.com/standings?leagueId
 export async function getNhlStandings(): Promise<NhlStandingsResponse> {
     const response = await fetch(API_URL, {
         method: "GET",
+        next: {revalidate: 900 },
         headers: {
             "x-rapidapi-key": process.env.RAPIDAPI_KEY!,
             "x-rapidapi-host": "hockey-highlights-api.p.rapidapi.com",
@@ -48,6 +49,7 @@ export async function getNhlMatches(): Promise<Match[]> {
                 `https://hockey-highlights-api.p.rapidapi.com/matches?${params.toString()}`,
                 {
                     method: "GET",
+                    next: { revalidate: 900 },
                     headers: {
                         "x-rapidapi-key": process.env.RAPIDAPI_KEY!,
                         "x-rapidapi-host": "hockey-highlights-api.p.rapidapi.com",
