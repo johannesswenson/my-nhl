@@ -2,16 +2,19 @@ import { getNhlMatches, getNhlStandings } from "@/lib/api/hockey";
 import MatchesList from "./components/matches/MatchesList";
 
 export default async function Home() {
-  const standings = await getNhlStandings();
-  const conferenceGroups = standings.groups.filter((group) => 
-    group.name.toLowerCase().includes("conference"),);
-
   const matches = await getNhlMatches();
 
   return (
-    <div className="font-sans dark:bg-black">
-      <main className="">
-        <h1 className="text-3xl font-semibold">This is my-nhl</h1>
+    <div className="min-h-screen bg-slate-950 font-sans text-white">
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <header className="mb-10 border-b border-slate-800 pb-6">
+          <h1 className="text-3xl font-bold tracking-tight">
+            my<span className="text-blue-500">-</span>nhl
+          </h1>
+          <p className="mt-2 text-sm text-slate-400">
+            NHL without the spoilers.
+          </p>
+        </header> 
         <MatchesList matches={matches} />
       </main>
     </div>
