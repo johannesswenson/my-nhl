@@ -1,7 +1,10 @@
 import { getNhlMatches, getNhlStandings } from "@/lib/api/hockey";
 import MatchesList from "./components/matches/MatchesList";
+import { connection } from "next/server";
 
 export default async function Home() {
+  await connection();
+  
   const matches = await getNhlMatches();
 
   return (
