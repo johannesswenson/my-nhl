@@ -1,0 +1,122 @@
+{
+  "info": {
+    "_postman_id": "72ae2b37-be66-48d5-a130-2d8ebd930e39",
+    "name": "NHL API - Highlightly",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "60050078",
+    "_collection_link": "https://go.postman.co/collection/60050078-72ae2b37-be66-48d5-a130-2d8ebd930e39?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get NHL Standings",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Respons contains standings groups\", function () {\n    const jsonData = pm.response.json();\n\n    pm.expect(jsonData).to.have.property(\"groups\");\n    pm.expect(jsonData.groups).to.be.an(\"array\");\n    pm.expect(jsonData.groups.length).to.be.above(0);\n});\n\npm.test(\"Standings groups contain teams\", function () {\n    const jsonData = pm.response.json();\n\n    jsonData.groups.forEach((group) => {\n        pm.expect(group).to.have.property(\"name\");\n        pm.expect(group.name).to.be.a(\"string\");\n\n        pm.expect(group.standings).to.be.an(\"array\");\n        pm.expect(group.standings.length).to.be.above(0);\n    });\n});\n\npm.test(\"Team standings contain valid statistics\", function () {\n    const jsonData = pm.response.json();\n\n    jsonData.groups.forEach((group) => {\n        group.standings.forEach((standing) => {\n            pm.expect(standing.team).to.have.property(\"id\");\n            pm.expect(standing.team).to.have.property(\"name\");\n            pm.expect(standing.wins).to.be.a(\"number\");\n            pm.expect(standing.loses).to.be.a(\"number\");\n            pm.expect(standing.position).to.be.a(\"number\");\n        });\n    });\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-rapidapi-key",
+            "value": "{{rapidapi_key}}"
+          },
+          {
+            "key": "x-rapidapi-host",
+            "value": "hockey-highlights-api.p.rapidapi.com"
+          }
+        ],
+        "url": {
+          "raw": "https://hockey-highlights-api.p.rapidapi.com/standings?leagueId=49291&season=2026",
+          "protocol": "https",
+          "host": [
+            "hockey-highlights-api",
+            "p",
+            "rapidapi",
+            "com"
+          ],
+          "path": [
+            "standings"
+          ],
+          "query": [
+            {
+              "key": "leagueId",
+              "value": "49291"
+            },
+            {
+              "key": "season",
+              "value": "2026"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get NHL Matches",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response contains match data\", function () {\n    const jsonData = pm.response.json();\n\n    pm.expect(jsonData).to.have.property(\"data\");\n    pm.expect(jsonData.data).to.be.an(\"array\");\n});\n\npm.test(\"Matches contain required properties\", function () {\n    const jsonData = pm.response.json();\n\n    jsonData.data.forEach((match) => {\n        pm.expect(match).to.have.property(\"id\");\n        pm.expect(match).to.have.property(\"date\");\n        pm.expect(match).to.have.property(\"state\");\n        pm.expect(match).to.have.property(\"homeTeam\");\n        pm.expect(match).to.have.property(\"awayTeam\");\n    });\n});\n\npm.test(\"Teams contain valid information\", function () {\n    const jsonData = pm.response.json();\n\n    jsonData.data.forEach((match) => {\n        pm.expect(match.homeTeam.name).to.be.a(\"string\");\n        pm.expect(match.awayTeam.name).to.be.a(\"string\");\n        pm.expect(match.homeTeam.id).to.be.a(\"number\");\n        pm.expect(match.awayTeam.id).to.be.a(\"number\");\n    });\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-rapidapi-key",
+            "value": "{{rapidapi_key}}"
+          },
+          {
+            "key": "x-rapidapi-host",
+            "value": "hockey-highlights-api.p.rapidapi.com"
+          }
+        ],
+        "url": {
+          "raw": "https://hockey-highlights-api.p.rapidapi.com/matches?leagueName=NHL&date=2026-11-09&timezone=Europe/Stockholm&limit=100",
+          "protocol": "https",
+          "host": [
+            "hockey-highlights-api",
+            "p",
+            "rapidapi",
+            "com"
+          ],
+          "path": [
+            "matches"
+          ],
+          "query": [
+            {
+              "key": "leagueName",
+              "value": "NHL"
+            },
+            {
+              "key": "date",
+              "value": "2026-11-09"
+            },
+            {
+              "key": "timezone",
+              "value": "Europe/Stockholm"
+            },
+            {
+              "key": "limit",
+              "value": "100"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
